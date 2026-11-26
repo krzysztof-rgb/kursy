@@ -107,7 +107,13 @@ function pokaz(ekran){document.getElementById('log').classList.toggle('on',ekran
 function zaloguj(){var b=document.getElementById('lb'),m=document.getElementById('lm');b.disabled=true;m.style.display='none';
  api({a:'login',login:document.getElementById('ll').value,haslo:document.getElementById('lh').value}).then(function(o){
   TOK=o.t;try{localStorage.setItem('kt',TOK);localStorage.removeItem('kd');}catch(e){}b.disabled=false;document.getElementById('lh').value='';start();})
- .catch(function(e){b.disabled=false;m.textContent='⚠ '+(e.message=='Failed to fetch'?'Brak połączenia z serwerem – sprawdź internet.':e.message);m.style.display='block';});}
+ .catch(function(e){b.disabled=false;m.style.display='block';
+  if(e.message!='Failed to fetch'&&e.message!='Load failed'){m.textContent='⚠ '+e.message;return;}
+  m.textContent='⚠ Brak połączenia ze skryptem – sprawdzam…';
+  // diagnoza: zwykłe zapytanie GET o wersję skryptu
+  fetch(API_URL+(API_URL.indexOf('?')<0?'?':'&')+'api=wersja').then(function(r){return r.text();}).then(function(t){var o=null;try{o=JSON.parse(t);}catch(x){}
+   m.textContent=o&&o.wersja?'⚠ Skrypt odpowiada (wersja '+o.wersja+'), ale logowanie nie przeszło – spróbuj ponownie za chwilę.':'⚠ Skrypt nie ma obsługi aplikacji – wdróż NOWĄ WERSJĘ (Wdróż → Zarządzaj wdrożeniami → ✏️ → Nowa wersja).';})
+  .catch(function(){m.textContent=navigator.onLine?'⚠ Skrypt nie odpowiada aplikacji: sprawdź adres w config.js i czy wdrożenie ma NOWĄ WERSJĘ z dostępem „Każdy”.':'⚠ Brak internetu.';});});}
 function wylogujLok(kom){TOK=null;try{localStorage.removeItem('kt');localStorage.removeItem('kd');}catch(e){}pokaz('log');
  if(kom){var m=document.getElementById('lm');m.textContent=kom;m.style.display='block';}}
 function wyloguj(){if(!confirm('Wylogować z aplikacji?'))return;var t=TOK;wylogujLok('');api({a:'wyloguj',t:t}).catch(function(){});}
