@@ -100,7 +100,16 @@ function motyw(){var t=document.documentElement.getAttribute('data-theme')=='lig
 if(document.documentElement.getAttribute('data-theme')=='light')document.getElementById('btnMot').textContent='🌙';
 
 // zapytanie do skryptu: POST z JSON jako zwykły tekst (bez dodatkowych nagłówków – działa z innej domeny)
-function api(q){return fetch(API_URL,{method:'POST',body:JSON.stringify(q),redirect:'follow'}).then(function(r){return r.json();}).then(function(o){
+// zapytanie do skryptu jako skrypt (JSONP) – omija blokady przeglądarki między domenami i przekierowania logowania Google w domenie firmowej
+var NRZ=0;
+function jsonp(q){return new Promise(function(ok,zle){var cb='_kr'+(++NRZ)+'_'+Date.now(),sc=document.createElement('script'),t=null;
+ function sprzataj(){clearTimeout(t);try{delete window[cb];}catch(e){window[cb]=undefined;}if(sc.parentNode)sc.parentNode.removeChild(sc);}
+ window[cb]=function(o){sprzataj();ok(o);};
+ sc.onerror=function(){sprzataj();zle(new Error('Failed to fetch'));};
+ t=setTimeout(function(){sprzataj();zle(new Error('Failed to fetch'));},25000);
+ sc.src=API_URL+(API_URL.indexOf('?')<0?'?':'&')+'cb='+cb+'&q='+encodeURIComponent(JSON.stringify(q));
+ document.head.appendChild(sc);});}
+function api(q){return jsonp(q).then(function(o){
  if(!o.ok&&o.zaloguj){wylogujLok('Zaloguj się ponownie.');throw new Error('zaloguj');}if(!o.ok)throw new Error(o.blad||'błąd');return o;});}
 
 function pokaz(ekran){document.getElementById('log').classList.toggle('on',ekran=='log');document.getElementById('app').classList.toggle('on',ekran=='app');}
@@ -111,9 +120,9 @@ function zaloguj(){var b=document.getElementById('lb'),m=document.getElementById
   if(e.message!='Failed to fetch'&&e.message!='Load failed'){m.textContent='⚠ '+e.message;return;}
   m.textContent='⚠ Brak połączenia ze skryptem – sprawdzam…';
   // diagnoza: zwykłe zapytanie GET o wersję skryptu
-  fetch(API_URL+(API_URL.indexOf('?')<0?'?':'&')+'api=wersja').then(function(r){return r.text();}).then(function(t){var o=null;try{o=JSON.parse(t);}catch(x){}
-   m.textContent=o&&o.wersja?'⚠ Skrypt odpowiada (wersja '+o.wersja+'), ale logowanie nie przeszło – spróbuj ponownie za chwilę.':'⚠ Skrypt nie ma obsługi aplikacji – wdróż NOWĄ WERSJĘ (Wdróż → Zarządzaj wdrożeniami → ✏️ → Nowa wersja).';})
-  .catch(function(){m.textContent=navigator.onLine?'⚠ Skrypt nie odpowiada aplikacji: sprawdź adres w config.js i czy wdrożenie ma NOWĄ WERSJĘ z dostępem „Każdy”.':'⚠ Brak internetu.';});});}
+  jsonp({a:'wersja'}).then(function(o){
+   m.textContent=o&&o.wersja?'⚠ Skrypt odpowiada (wersja '+o.wersja+'), ale logowanie nie przeszło – spróbuj ponownie za chwilę.':'⚠ Nieoczekiwana odpowiedź skryptu.';})
+  .catch(function(){m.textContent=navigator.onLine?'⚠ Skrypt nie odpowiada aplikacji: sprawdź adres w config.js i czy wdrożenie ma NOWĄ WERSJĘ (min. 2026-11-26 15:20) z dostępem „Każdy”.':'⚠ Brak internetu.';});});}
 function wylogujLok(kom){TOK=null;try{localStorage.removeItem('kt');localStorage.removeItem('kd');}catch(e){}pokaz('log');
  if(kom){var m=document.getElementById('lm');m.textContent=kom;m.style.display='block';}}
 function wyloguj(){if(!confirm('Wylogować z aplikacji?'))return;var t=TOK;wylogujLok('');api({a:'wyloguj',t:t}).catch(function(){});}
