@@ -1,5 +1,5 @@
 // Aplikacja kierowcy – praca offline: pliki aplikacji z pamięci, gdy nie ma zasięgu (dane kursów trzyma sama aplikacja)
-var WER = 'kursy-v1';
+var WER = 'kursy-v2';
 var PLIKI = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', function (e) { e.waitUntil(caches.open(WER).then(function (c) { return c.addAll(PLIKI); })); self.skipWaiting(); });
 self.addEventListener('activate', function (e) {
