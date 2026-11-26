@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1324">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kursy">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Moje kursy</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('motyw')||'dark');}catch(e){}</script>
+<script src="config.js"></script>
+<style>
+:root{--bg:#070d1a;--pan:#111b30;--pan2:#16233f;--lin:rgba(148,163,184,.16);--tx:#e2e8f0;--mut:#8b9ab4;--acc:#22d3ee;--zal:#60a5fa;--roz:#fb923c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial;color:var(--tx);background:var(--bg);min-height:100vh}
+#top{position:sticky;top:0;z-index:5;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:rgba(10,17,32,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--lin)}
+#top h1{margin:0;display:flex;align-items:center;gap:10px;font-size:16px}
+#top h1 i{font-style:normal;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#06b6d4,#3b82f6);font-size:18px}
+#top h1 small{display:block;font-size:10px;color:var(--acc);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.ib{margin-left:auto;background:var(--pan2);border:1px solid var(--lin);color:var(--tx);border-radius:10px;width:38px;height:38px;font-size:17px}
+.ib+.ib{margin-left:6px}
+#st{font-size:11.5px;color:var(--mut);margin-top:4px}#st.off{color:#fbbf24}
+main{padding:10px 12px 100px;max-width:720px;margin:0 auto}
+.dz{margin:16px 2px 8px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);display:flex;align-items:center;gap:8px}.dz:after{content:"";flex:1;height:1px;background:var(--lin)}
+.k{background:linear-gradient(180deg,var(--pan2),var(--pan));border:1px solid var(--lin);border-left:4px solid #f59e0b;border-radius:14px;padding:12px 14px;margin-bottom:10px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.k.jd{border-left-color:#22d3ee}.k.zl{border-left-color:#a855f7}.k.ok{border-left-color:#22c55e;opacity:.6}
+.hd{display:flex;align-items:center;gap:8px}.n{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#2563eb;color:#fff;font-weight:800;font-size:13px}
+.k.ok .n{background:#16a34a}.kl{font-weight:800;font-size:16px}.nr{color:var(--mut);font-size:12px}
+.ch{margin-left:auto;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;background:rgba(245,158,11,.15);color:#fbbf24}
+.ch.jd{background:rgba(34,211,238,.15);color:#67e8f9}.ch.zl{background:rgba(168,85,247,.18);color:#d8b4fe}.ch.ok{background:rgba(34,197,94,.16);color:#86efac}
+.tr{margin:10px 0 2px;display:grid;grid-template-columns:22px 1fr;gap:2px 8px;position:relative}
+.tr .ik{display:grid;place-items:start center;padding-top:2px;font-size:14px}
+.tr .lb{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;font-weight:700}.tr .ad{font-weight:600;font-size:14.5px;margin-bottom:6px}
+.zal .lb{color:var(--zal)}.roz .lb{color:var(--roz)}
+.ln{position:absolute;left:10px;top:22px;bottom:30px;border-left:2px dotted var(--lin)}
+.ld{margin-top:6px;padding:9px 11px;border-radius:10px;background:rgba(148,163,184,.08);font-size:14px}.ld b{font-size:15px}
+.mt{margin-top:7px;font-size:13px;color:var(--mut)}.mt div{margin-top:3px}
+.pus{padding:30px 10px;text-align:center;color:var(--mut)}
+.pin,.tel{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:6px 12px;border-radius:999px;font-size:13.5px;font-weight:700;text-decoration:none;border:1px solid}
+.pin{background:rgba(59,130,246,.14);border-color:rgba(96,165,250,.45);color:#93c5fd}.tel{background:rgba(34,197,94,.14);border-color:rgba(74,222,128,.45);color:#86efac;margin:3px 2px}
+/* logowanie */
+#log{display:none;min-height:100vh;place-items:center;padding:20px;background:radial-gradient(900px 400px at 70% -100px,#12305a 0%,var(--bg) 60%)}#log.on{display:grid}
+.lk{width:min(380px,100%);background:linear-gradient(180deg,#16233f,#0d1628);border:1px solid rgba(148,163,184,.24);border-radius:16px;padding:26px 22px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.lk h2{margin:0 0 16px;display:flex;align-items:center;gap:10px;font-size:18px}.lk h2 i{font-style:normal;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#06b6d4,#3b82f6)}
+.lk label{display:block;font-size:11px;color:#8b9ab4;letter-spacing:1px;text-transform:uppercase;margin:12px 0 5px;font-weight:600}
+.lk input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(148,163,184,.3);background:#111c33;color:#e2e8f0;font:inherit;font-size:16px}
+.lk button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:10px;background:linear-gradient(135deg,#0891b2,#2563eb);color:#fff;font:700 15px inherit}
+.lk .m{margin-top:12px;padding:9px 11px;border-radius:9px;background:rgba(245,158,11,.12);color:#fcd34d;font-size:13px;display:none}
+#app{display:none}#app.on{display:block}
+/* instalacja */
+#inst{display:none;margin:10px 12px 0;padding:10px 12px;border-radius:12px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.4);font-size:13px;align-items:center;gap:10px}
+#inst.on{display:flex}#inst button{margin-left:auto;border:0;border-radius:9px;padding:8px 12px;background:linear-gradient(135deg,#0891b2,#2563eb);color:#fff;font-weight:700;white-space:nowrap}
+#inst .x{background:none;padding:4px 6px;margin-left:4px;color:var(--mut);font-size:18px}
+/* czat */
+#czF{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:20;width:60px;height:60px;border-radius:50%;border:0;background:linear-gradient(135deg,#0891b2,#2563eb);color:#fff;font-size:27px;box-shadow:0 10px 26px rgba(0,0,0,.45)}
+#czF i{position:absolute;top:-3px;right:-3px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#ef4444;color:#fff;font:800 12px/22px "Segoe UI",Arial;font-style:normal;display:none}#czF i.on{display:block}
+#czP{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;background:var(--bg)}#czP.on{display:flex}
+#czP .h{display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;border-bottom:1px solid var(--lin);background:var(--pan2);font-weight:800;font-size:16px}#czP .h button{margin-left:auto;background:none;border:0;color:var(--tx);font-size:28px;line-height:1}
+#czM{flex:1;overflow:auto;padding:12px}
+.cm{display:flex;margin:4px 0}.cm.ja{justify-content:flex-end}.cm .b{max-width:82%;padding:8px 12px 5px;border-radius:16px;background:var(--pan2);border:1px solid var(--lin);white-space:pre-wrap;word-wrap:break-word;font-size:15px}
+.cm.ja .b{background:linear-gradient(135deg,#0e7490,#1d4ed8);color:#fff;border-color:transparent;border-bottom-right-radius:4px}.cm:not(.ja) .b{border-bottom-left-radius:4px}.cm .g{display:block;text-align:right;font-size:11px;opacity:.7;margin-top:2px}
+.cd{text-align:center;margin:10px 0;font-size:11.5px;color:var(--mut)}
+#czN{display:flex;gap:8px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--lin);background:var(--pan2)}
+#czN textarea{flex:1;resize:none;height:50px;background:var(--pan);border:1px solid var(--lin);color:var(--tx);border-radius:14px;padding:12px;font:inherit;font-size:16px}
+#czN button{border:0;border-radius:14px;padding:0 20px;background:linear-gradient(135deg,#0891b2,#2563eb);color:#fff;font-size:18px;font-weight:800}#czN button:disabled{opacity:.5}
+html[data-theme=light]{--bg:#eef2f7;--pan:#fff;--pan2:#f7f9fc;--lin:rgba(15,23,42,.12);--tx:#0f172a;--mut:#5b6b82;--acc:#0284c7;--zal:#2563eb;--roz:#ea580c}
+html[data-theme=light] #top{background:rgba(255,255,255,.95)}html[data-theme=light] .k{box-shadow:0 2px 8px rgba(15,23,42,.08)}
+html[data-theme=light] .ch{color:#b45309}html[data-theme=light] .ch.jd{color:#0e7490}html[data-theme=light] .ch.zl{color:#7e22ce}html[data-theme=light] .ch.ok{color:#15803d}
+html[data-theme=light] .pin{color:#1d4ed8;background:#dbeafe}html[data-theme=light] .tel{color:#15803d;background:#dcfce7}
+</style>
+</head>
+<body>
+<div id="log"><form class="lk" onsubmit="zaloguj();return false;">
+ <h2><i>🚚</i>Moje kursy</h2>
+ <div class="m" id="lm"></div>
+ <label>Login</label><input id="ll" autocomplete="username" autocapitalize="none" required>
+ <label>Hasło</label><input id="lh" type="password" autocomplete="current-password" required>
+ <button id="lb">Zaloguj</button>
+</form></div>
+
+<div id="app">
+ <div id="top"><h1><i>🚚</i><div><small>Moje kursy</small><span id="kto">…</span></div><button class="ib" id="btnMot" onclick="motyw()" title="motyw">☀️</button><button class="ib" onclick="wyloguj()" title="wyloguj">🚪</button></h1><div id="st">wczytywanie…</div></div>
+ <div id="inst"><span id="instT">📲 Zainstaluj aplikację na telefonie</span><button id="instB" onclick="instaluj()">Zainstaluj</button><button class="x" onclick="ukryjInst()">×</button></div>
+ <main id="L"></main>
+ <button id="czF" onclick="czOtworz()" title="napisz do dyspozytora">💬<i id="czFb"></i></button>
+ <div id="czP"><div class="h">💬 Dyspozytor<button onclick="czZamknij()" title="zamknij">×</button></div><div id="czM"><div class="pus">wczytywanie…</div></div>
+  <div id="czN"><textarea id="czT" placeholder="Wiadomość do dyspozytora…"></textarea><button id="czW" onclick="czWyslij()">➤</button></div></div>
+</div>
+
+<script>
+var DN=['nd','pn','wt','śr','cz','pt','sb'],TOK=null,ANDR=/android/i.test(navigator.userAgent),IOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+try{TOK=localStorage.getItem('kt');}catch(e){}
+function esc(t){return String(t==null?'':t).replace(/[<>&"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+function motyw(){var t=document.documentElement.getAttribute('data-theme')=='light'?'dark':'light';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('motyw',t);}catch(e){}document.getElementById('btnMot').textContent=t=='light'?'🌙':'☀️';}
+if(document.documentElement.getAttribute('data-theme')=='light')document.getElementById('btnMot').textContent='🌙';
+
+// zapytanie do skryptu: POST z JSON jako zwykły tekst (bez dodatkowych nagłówków – działa z innej domeny)
+function api(q){return fetch(API_URL,{method:'POST',body:JSON.stringify(q),redirect:'follow'}).then(function(r){return r.json();}).then(function(o){
+ if(!o.ok&&o.zaloguj){wylogujLok('Zaloguj się ponownie.');throw new Error('zaloguj');}if(!o.ok)throw new Error(o.blad||'błąd');return o;});}
+
+function pokaz(ekran){document.getElementById('log').classList.toggle('on',ekran=='log');document.getElementById('app').classList.toggle('on',ekran=='app');}
+function zaloguj(){var b=document.getElementById('lb'),m=document.getElementById('lm');b.disabled=true;m.style.display='none';
+ api({a:'login',login:document.getElementById('ll').value,haslo:document.getElementById('lh').value}).then(function(o){
+  TOK=o.t;try{localStorage.setItem('kt',TOK);localStorage.removeItem('kd');}catch(e){}b.disabled=false;document.getElementById('lh').value='';start();})
+ .catch(function(e){b.disabled=false;m.textContent='⚠ '+(e.message=='Failed to fetch'?'Brak połączenia z serwerem – sprawdź internet.':e.message);m.style.display='block';});}
+function wylogujLok(kom){TOK=null;try{localStorage.removeItem('kt');localStorage.removeItem('kd');}catch(e){}pokaz('log');
+ if(kom){var m=document.getElementById('lm');m.textContent=kom;m.style.display='block';}}
+function wyloguj(){if(!confirm('Wylogować z aplikacji?'))return;var t=TOK;wylogujLok('');api({a:'wyloguj',t:t}).catch(function(){});}
+
+// kursy
+function dm(iso){var d=new Date(iso+'T12:00:00');return DN[d.getDay()]+' '+iso.slice(8,10)+'.'+iso.slice(5,7);}
+function kl(s){return s=='Dostarczone'?'ok':s=='W drodze'?'jd':s=='Załadowany'?'zl':'';}
+function pinUrl(l){if(!l)return '';var g=l.g,q=encodeURIComponent(l.q||'');
+ if(ANDR)return g?'geo:'+g[0]+','+g[1]+'?q='+g[0]+','+g[1]+'('+q+')':'geo:0,0?q='+q;
+ if(IOS)return 'https://maps.apple.com/?q='+(g?g[0]+','+g[1]:q);
+ return 'https://www.google.com/maps/search/?api=1&query='+(g?g[0]+','+g[1]:q);}
+function adr(t,l){return esc(t)+(l&&!/^\s*brukdom\s*$/i.test(t)?'<br><a class="pin" href="'+pinUrl(l)+'"'+(ANDR?'':' target="_blank" rel="noopener"')+'>📍 pinezka w mapie</a>':'');}
+function tele(t){return esc(t).replace(/(\+?48[\s-]?)?(\d{3}[\s-]?\d{3}[\s-]?\d{3})(?!\d)/g,function(m,p,n){return '<a class="tel" href="tel:+48'+n.replace(/[\s-]/g,'')+'">📞 '+n+'</a>';});}
+function rysuj(D,offline){document.getElementById('kto').textContent=(D.auto||'')+' · '+(D.imie||'');
+ var st=document.getElementById('st');st.className=offline?'off':'';st.textContent=offline?'⚠ brak połączenia – stan z '+D.teraz:'stan na '+D.teraz+' · odświeża się samo';
+ if(!D.kursy.length){document.getElementById('L').innerHTML='<div class="pus">Brak kursów na dziś i najbliższe dni.</div>';return;}
+ var h='',dz='',n=0;
+ D.kursy.forEach(function(k){if(k.dzien!=dz){dz=k.dzien;n=0;h+='<div class="dz">'+(dz==D.dzis?'Dziś':dz==D.jutro?'Jutro':'')+' '+dm(dz)+'</div>';}n++;var c=kl(k.status);
+  h+='<div class="k '+c+'"><div class="hd"><span class="n">'+(k.status=='Dostarczone'?'✔':n)+'</span><div><div class="kl">'+esc(k.kontr)+'</div><div class="nr">'+esc(k.nr)+' · kurs '+esc(k.kurs)+(k.zaleg?' · z '+dm(k.termin):'')+'</div></div>'+
+   '<span class="ch '+c+'">'+esc(k.status=='Dostarczone'&&k.roz?'rozładowano '+k.roz.split('–')[0]:k.status)+'</span></div>'+
+   '<div class="tr"><span class="ln"></span><span class="ik">⬆</span><div class="zal"><div class="lb">Załadunek</div><div class="ad">'+adr(k.zal,k.zalLink)+'</div></div>'+
+   '<span class="ik">⬇</span><div class="roz"><div class="lb">Wyładunek</div><div class="ad">'+adr(k.adres||'—',k.adrLink)+'</div></div></div>'+
+   '<div class="ld">📦 <b>'+esc(k.ladunek||'—')+'</b>'+(k.masa?' · '+String(k.masa).replace('.',',')+' t':'')+(k.palety?' · '+esc(k.palety)+' pal.':'')+'</div>'+
+   ((k.kontakt||k.uwagi)?'<div class="mt">'+(k.kontakt?'<div>👤 '+tele(k.kontakt)+'</div>':'')+(k.uwagi?'<div>ℹ️ '+tele(k.uwagi)+'</div>':'')+'</div>':'')+'</div>';});
+ document.getElementById('L').innerHTML=h;}
+function laduj(){if(!TOK)return;api({a:'dane',t:TOK}).then(function(o){try{localStorage.setItem('kd',JSON.stringify(o.d));}catch(e){}rysuj(o.d,false);})
+ .catch(function(e){if(e.message=='zaloguj')return;var c=null;try{c=JSON.parse(localStorage.getItem('kd')||'null');}catch(x){}
+  if(c)rysuj(c,true);else{var st=document.getElementById('st');st.className='off';st.textContent='⚠ '+(e.message=='Failed to fetch'?'brak połączenia':e.message);}});}
+
+// czat z dyspozytorem
+var CZW=0,CZO=false,CZN=0,CZAC=null,CZP=true;
+function czBip(){try{CZAC=CZAC||new (window.AudioContext||window.webkitAudioContext)();var o=CZAC.createOscillator(),g=CZAC.createGain();o.connect(g);g.connect(CZAC.destination);o.frequency.value=880;g.gain.setValueAtTime(.2,CZAC.currentTime);g.gain.exponentialRampToValueAtTime(.001,CZAC.currentTime+.4);o.start();o.stop(CZAC.currentTime+.4);}catch(e){}if(navigator.vibrate)navigator.vibrate([120,60,120]);}
+document.addEventListener('click',function(){try{CZAC=CZAC||new (window.AudioContext||window.webkitAudioContext)();}catch(e){}},{once:true});
+function czDz(t){var d=t.slice(0,10),f=function(x){return x.toISOString().slice(0,10);};return d==f(new Date())?'dziś':d==f(new Date(Date.now()-864e5))?'wczoraj':d.slice(8,10)+'.'+d.slice(5,7);}
+function czRysuj(d){var b=document.getElementById('czFb');b.textContent=d.niep||'';b.classList.toggle('on',!!d.niep);
+ if(d.niep>CZN&&!CZP)czBip();CZN=d.niep;CZP=false;
+ var m=document.getElementById('czM'),dol=m.scrollHeight-m.scrollTop-m.clientHeight<60,h='',dz='';
+ if(!d.l.length){m.innerHTML='<div class="pus">Napisz do dyspozytora – odpowiedź pojawi się tutaj.</div>';return;}
+ d.l.forEach(function(x){var dd=czDz(x.t);if(dd!=dz){dz=dd;h+='<div class="cd">'+dd+'</div>';}var ja=x.od=='k';
+  h+='<div class="cm'+(ja?' ja':'')+'"><div class="b">'+(ja?esc(x.tx):tele(x.tx))+'<span class="g">'+x.t.slice(11,16)+(ja?(d.czytD>=x.id?' ✓✓':' ✓'):'')+'</span></div></div>';});
+ m.innerHTML=h;if(dol||CZO)m.scrollTop=m.scrollHeight;}
+function czLaduj(sila){if(!TOK)return;api({a:'czat',t:TOK,wer:sila?0:CZW,otwarte:CZO&&!document.hidden}).then(function(o){if(!o.c.zmiana)return;CZW=o.c.wer;czRysuj(o.c);}).catch(function(){});}
+function czOtworz(){CZO=true;document.getElementById('czP').classList.add('on');czLaduj(true);}
+function czZamknij(){CZO=false;document.getElementById('czP').classList.remove('on');}
+function czWyslij(){var t=document.getElementById('czT'),v=t.value.trim();if(!v)return;var b=document.getElementById('czW');b.disabled=true;
+ api({a:'wyslij',t:TOK,tx:v}).then(function(o){b.disabled=false;t.value='';CZW=o.c.wer;czRysuj(o.c);var m=document.getElementById('czM');m.scrollTop=m.scrollHeight;})
+  .catch(function(e){b.disabled=false;if(e.message!='zaloguj')alert('Nie wysłano: '+(e.message=='Failed to fetch'?'brak połączenia':e.message));});}
+
+// instalacja na ekranie telefonu
+var INST=null,STANDALONE=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+function ukryjInst(){document.getElementById('inst').classList.remove('on');try{localStorage.setItem('instUkryj','1');}catch(e){}}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();INST=e;if(!STANDALONE&&!localStorage.getItem('instUkryj'))document.getElementById('inst').classList.add('on');});
+function instaluj(){if(INST){INST.prompt();INST.userChoice.then(function(){INST=null;document.getElementById('inst').classList.remove('on');});}}
+if(IOS&&!STANDALONE&&!localStorage.getItem('instUkryj')){document.getElementById('instT').textContent='📲 Dodaj do ekranu: przycisk Udostępnij ⬆ → „Do ekranu początkowego”';document.getElementById('instB').style.display='none';document.getElementById('inst').classList.add('on');}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+
+var T1=null,T2=null;
+function start(){if(!/^https:/.test(String(typeof API_URL=='string'?API_URL:''))){document.body.innerHTML='<div class="pus">Brak adresu skryptu w pliku config.js.</div>';return;}
+ if(!TOK){pokaz('log');return;}pokaz('app');
+ var c=null;try{c=JSON.parse(localStorage.getItem('kd')||'null');}catch(e){}if(c)rysuj(c,false);
+ laduj();czLaduj(true);clearInterval(T1);T1=setInterval(function(){if(!document.hidden)laduj();},120000);
+ clearTimeout(T2);(function petla(){if(!document.hidden)czLaduj(false);T2=setTimeout(petla,CZO?4000:12000);})();}
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&TOK){laduj();czLaduj(true);}});
+start();
+</script>
+</body>
+</html>
